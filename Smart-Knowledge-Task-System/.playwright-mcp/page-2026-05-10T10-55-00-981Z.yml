@@ -1,0 +1,24 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e5]:
+    - paragraph [ref=e6]: "1"
+    - paragraph [ref=e7]: "2"
+    - paragraph [ref=e8]: "3"
+    - paragraph [ref=e9]: "4"
+    - paragraph [ref=e10]: "5"
+    - paragraph [ref=e11]: "6"
+    - paragraph [ref=e12]: "7"
+    - paragraph [ref=e13]: "8"
+    - paragraph [ref=e14]: "9"
+    - paragraph [ref=e15]: "10"
+    - paragraph [ref=e16]: "11"
+    - paragraph [ref=e17]: "12"
+    - paragraph [ref=e18]: "13"
+    - paragraph [ref=e19]: "14"
+    - paragraph [ref=e20]: "15"
+    - paragraph [ref=e21]: "16"
+    - paragraph [ref=e22]: "17"
+    - paragraph [ref=e23]: "18"
+    - paragraph [ref=e24]: "19"
+    - paragraph [ref=e25]: "20"
+  - generic "Toggle devtools panel" [ref=e27] [cursor=pointer]:
+    - img [ref=e28]
