@@ -26,6 +26,23 @@
 - [x] 创建 `src/stores/uiStore.ts` — 当前视图、选中任务等 UI 状态
   - **验收**：切换 `currentView = 'table'`，值正确响应 ✅ (2026-05-10)
 
+## S2 任务清单
+
+- [ ] 搭建路由 + App 布局壳
+  - **验收**：访问首页不再显示 demo，路由正常跳转至 KanbanView
+- [ ] 创建 TaskCard 组件
+  - **验收**：传 mock Task 数据，卡片正确渲染 title / priority 色标 / tags
+- [ ] 创建 KanbanColumn 组件
+  - **验收**：三列分别渲染 Todo / Doing / Done，计数正确，空列显示占位提示
+- [ ] 创建 KanbanView + 接入 Store
+  - **验收**：数据来自 `taskStore.tasksByStatus`，顶部输入框回车可新增任务
+- [ ] 状态切换（下拉菜单）
+  - **验收**：卡片上切换状态 → `changeStatus` 生效 → 列更新 → 刷新不丢
+- [ ] 卡片交互（删除 + 跳转 Detail）
+  - **验收**：点删除 → 卡片消失；点卡片 → 跳转 `/workspace/:id/task/:taskId`
+- [ ] 拖拽流转（可选）
+  - **验收**：卡片从一列拖到另一列 → 状态自动更新
+
 ## 阻塞
 
 无
