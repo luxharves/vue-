@@ -17,10 +17,10 @@
 
 ## S1 任务清单
 
-- [ ] 创建 `src/types/index.ts` — Task / Block / Workspace 接口
-  - **验收**：`npm run type-check` 无报错
-- [ ] 创建 `src/services/storageService.ts` — localStorage 抽象层
-  - **验收**：console 调 `save('k', {a:1})` → 刷新 → `load('k')` 返回 `{a:1}`
+- [x] 创建 `src/types/index.ts` — Task / Block / Workspace 接口
+  - **验收**：`npm run type-check` 无报错 ✅ (2026-05-10)
+- [x] 创建 `src/services/storageService.ts` — localStorage 抽象层
+  - **验收**：console 调 `save('k', {a:1})` → 刷新 → `load('k')` 返回 `{a:1}` ✅ (2026-05-10)
 - [ ] 创建 `src/stores/taskStore.ts` — 任务 CRUD + $subscribe 持久化
   - **验收**：addTask → tasks 长度 +1 → 刷新不丢 → changeStatus 状态改对 → deleteTask 消失
 - [ ] 创建 `src/stores/uiStore.ts` — 当前视图、选中任务等 UI 状态
