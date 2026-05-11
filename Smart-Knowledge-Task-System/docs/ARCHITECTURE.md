@@ -110,4 +110,5 @@ App.vue
 | storageService 独立 | 未来换 IndexedDB 时 Store 代码零修改 |
 | $subscribe 持久化 | 数据量小，无需防抖；Pinia 原生支持，零依赖 |
 | setup store 语法 | 项目已选用，组合式 API 风格统一 |
-| Element Plus | 用户指定，快速出 UI |
+| Element Plus | 弹窗/表单/图标等通用 UI 由 Element Plus 兜底 |
+| frontend-design (S2+) | 看板核心视觉（卡片/列/拖拽动画）调用 frontend-design 产出，Element Plus 负责表单弹窗；看板是系统门面，值得花设计功夫 |

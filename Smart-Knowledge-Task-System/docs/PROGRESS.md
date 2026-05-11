@@ -2,14 +2,14 @@
 
 ## 当前阶段
 
-**S2 — Kanban 视图**（待开始）
+**S2 — Kanban 视图**（进行中）
 
 ## 阶段进度
 
 | 阶段 | 状态 | 完成日期 |
 |---|---|---|
 | S1: 数据模型 + Store | ✅ 已完成 | 2026-05-10 |
-| S2: Kanban 视图 | ⚪ 待开始 | — |
+| S2: Kanban 视图 | 🟡 进行中 | — |
 | S3: Table 视图 | ⚪ 待开始 | — |
 | S4: Block + Detail | ⚪ 待开始 | — |
 | S5: Workspace + UI | ⚪ 待开始 | — |
@@ -28,8 +28,10 @@
 
 ## S2 任务清单
 
-- [ ] 搭建路由 + App 布局壳
-  - **验收**：访问首页不再显示 demo，路由正常跳转至 KanbanView
+> **设计策略**: 看板核心视觉（卡片/列/拖拽动画）使用 frontend-design 产出，弹窗/表单用 Element Plus 兜底。
+
+- [x] 搭建路由 + App 布局壳
+  - **验收**：访问首页不再显示 demo，路由正常跳转至 KanbanView ✅ (2026-05-11)
 - [ ] 创建 TaskCard 组件
   - **验收**：传 mock Task 数据，卡片正确渲染 title / priority 色标 / tags
 - [ ] 创建 KanbanColumn 组件

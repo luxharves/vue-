@@ -1,0 +1,16 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SKTS" [level=1] [ref=e6]
+      - navigation [ref=e7]:
+        - paragraph [ref=e8]: 工作空间
+        - list [ref=e9]:
+          - listitem [ref=e10] [cursor=pointer]:
+            - generic [ref=e11]: 📋
+            - generic [ref=e12]: 默认空间
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - heading "表格视图" [level=2] [ref=e15]
+        - paragraph [ref=e16]: TableView — 待实现 (S3)
+  - generic "Toggle devtools panel" [ref=e18] [cursor=pointer]:
+    - img [ref=e19]

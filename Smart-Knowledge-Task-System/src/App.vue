@@ -1,19 +1,39 @@
 <template>
-  <el-scrollbar height="400px">
-    <p v-for="item in 20" :key="item" class="scrollbar-demo-item">{{ item }}</p>
-  </el-scrollbar>
+  <div class="app-shell">
+    <WorkspaceSidebar />
+    <main class="main-content">
+      <router-view />
+    </main>
+  </div>
 </template>
 
+<script setup lang="ts">
+import WorkspaceSidebar from '@/components/common/WorkspaceSidebar.vue'
+</script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+</style>
+
 <style scoped>
-.scrollbar-demo-item {
+.app-shell {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px;
-  margin: 10px;
-  text-align: center;
-  border-radius: 4px;
-  background: var(--el-color-primary-light-9);
-  color: var(--el-color-primary);
+  height: 100vh;
+  background: #fff;
+}
+
+.main-content {
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
 }
 </style>
