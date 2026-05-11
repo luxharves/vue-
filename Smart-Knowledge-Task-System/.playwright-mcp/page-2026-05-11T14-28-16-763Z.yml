@@ -1,0 +1,63 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SKTS" [level=1] [ref=e6]
+      - navigation [ref=e7]:
+        - paragraph [ref=e8]: 工作空间
+        - list [ref=e9]:
+          - listitem [ref=e10] [cursor=pointer]:
+            - generic [ref=e11]: 📋
+            - generic [ref=e12]: 默认空间
+    - main [ref=e13]:
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - heading "Kanban 看板" [level=2] [ref=e22]
+          - generic [ref=e23]:
+            - textbox "输入任务标题，回车新建..." [active] [ref=e24]
+            - button "+" [ref=e25] [cursor=pointer]
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e29]:
+              - heading "待办" [level=3] [ref=e31]
+              - generic [ref=e32]: "3"
+            - generic [ref=e34]:
+              - generic [ref=e89] [cursor=pointer]:
+                - generic [ref=e90]:
+                  - heading "测试状态切换" [level=3] [ref=e91]
+                  - button [ref=e93]:
+                    - img [ref=e95]
+                - generic [ref=e98]: 中
+                - paragraph [ref=e99]: 刚刚
+              - generic [ref=e37] [cursor=pointer]:
+                - generic [ref=e38]:
+                  - heading "dad1" [level=3] [ref=e39]
+                  - button [ref=e41]:
+                    - img [ref=e43]
+                - generic [ref=e46]: 中
+                - paragraph [ref=e47]: 3 分钟前
+              - generic [ref=e50] [cursor=pointer]:
+                - generic [ref=e51]:
+                  - heading "测试新增任务功能" [level=3] [ref=e52]
+                  - button [ref=e54]:
+                    - img [ref=e56]
+                - generic [ref=e59]: 中
+                - paragraph [ref=e60]: 5 分钟前
+          - generic [ref=e61]:
+            - generic [ref=e63]:
+              - heading "进行中" [level=3] [ref=e65]
+              - generic [ref=e66]: "0"
+            - generic [ref=e68]:
+              - paragraph [ref=e69]: —
+              - paragraph [ref=e70]: 暂无任务
+          - generic [ref=e71]:
+            - generic [ref=e73]:
+              - heading "已完成" [level=3] [ref=e75]
+              - generic [ref=e76]: "0"
+            - generic [ref=e78]:
+              - paragraph [ref=e79]: —
+              - paragraph [ref=e80]: 暂无任务
+  - generic [ref=e14]:
+    - generic "Toggle devtools panel" [ref=e15] [cursor=pointer]:
+      - img [ref=e16]
+    - generic "Toggle Component Inspector" [ref=e82] [cursor=pointer]:
+      - img [ref=e83]

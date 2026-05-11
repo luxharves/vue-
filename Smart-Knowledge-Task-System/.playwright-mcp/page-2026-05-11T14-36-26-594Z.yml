@@ -1,0 +1,48 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SKTS" [level=1] [ref=e6]
+      - navigation [ref=e7]:
+        - paragraph [ref=e8]: 工作空间
+        - list [ref=e9]:
+          - listitem [ref=e10] [cursor=pointer]:
+            - generic [ref=e11]: 📋
+            - generic [ref=e12]: 默认空间
+    - main [ref=e13]:
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - heading "Kanban 看板" [level=2] [ref=e22]
+          - generic [ref=e23]:
+            - textbox "输入任务标题，回车新建..." [active] [ref=e24]
+            - button "+" [ref=e25] [cursor=pointer]
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e29]:
+              - heading "待办" [level=3] [ref=e31]
+              - generic [ref=e32]: "1"
+            - generic [ref=e83] [cursor=pointer]:
+              - generic [ref=e84]:
+                - heading "测试跳转Detail" [level=3] [ref=e85]
+                - button [ref=e87]:
+                  - img [ref=e89]
+              - generic [ref=e92]: 中
+              - paragraph [ref=e93]: 刚刚
+          - generic [ref=e37]:
+            - generic [ref=e39]:
+              - heading "进行中" [level=3] [ref=e41]
+              - generic [ref=e42]: "0"
+            - generic [ref=e44]:
+              - paragraph [ref=e45]: —
+              - paragraph [ref=e46]: 暂无任务
+          - generic [ref=e47]:
+            - generic [ref=e49]:
+              - heading "已完成" [level=3] [ref=e51]
+              - generic [ref=e52]: "0"
+            - generic [ref=e54]:
+              - paragraph [ref=e55]: —
+              - paragraph [ref=e56]: 暂无任务
+  - generic [ref=e14]:
+    - generic "Toggle devtools panel" [ref=e15] [cursor=pointer]:
+      - img [ref=e16]
+    - generic "Toggle Component Inspector" [ref=e58] [cursor=pointer]:
+      - img [ref=e59]
