@@ -1,5 +1,12 @@
 <template>
-  <div class="kanban-column" :class="`column-${status}`">
+  <div
+    class="kanban-column"
+    :class="[`column-${status}`, { 'is-drag-over': dragOver }]"
+    @dragover.prevent="onDragOver"
+    @dragenter.prevent="onDragEnter"
+    @dragleave="onDragLeave"
+    @drop.prevent="onDrop"
+  >
     <div class="column-header">
       <div class="column-title-row">
         <span class="column-dot"></span>
@@ -25,14 +32,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type { Task, TaskStatus } from '@/types'
 import TaskCard from '@/components/kanban/TaskCard.vue'
+import { useTaskStore } from '@/stores/taskStore'
+
+const DRAG_DATA_KEY = 'task-id'
 
 const props = defineProps<{
   status: TaskStatus
   tasks: Task[]
 }>()
+
+const taskStore = useTaskStore()
+
+const dragOver = ref(false)
+let enterCount = 0
 
 const statusMap: Record<TaskStatus, string> = {
   todo: '待办',
@@ -41,6 +56,33 @@ const statusMap: Record<TaskStatus, string> = {
 }
 
 const statusLabel = computed(() => statusMap[props.status])
+
+function onDragOver(e: DragEvent): void {
+  if (e.dataTransfer) {
+    e.dataTransfer.dropEffect = 'move'
+  }
+}
+
+function onDragEnter(): void {
+  enterCount++
+  dragOver.value = true
+}
+
+function onDragLeave(): void {
+  enterCount--
+  if (enterCount <= 0) {
+    enterCount = 0
+    dragOver.value = false
+  }
+}
+
+function onDrop(e: DragEvent): void {
+  dragOver.value = false
+  enterCount = 0
+  const taskId = e.dataTransfer?.getData(DRAG_DATA_KEY)
+  if (!taskId) return
+  taskStore.changeStatus(taskId, props.status)
+}
 </script>
 
 <style scoped>
@@ -52,6 +94,12 @@ const statusLabel = computed(() => statusMap[props.status])
   border-radius: 12px;
   background: #f5f6fa;
   max-height: 100%;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kanban-column.is-drag-over {
+  background: #eaf0fd;
+  box-shadow: inset 0 0 0 2px #409eff;
 }
 
 .column-header {

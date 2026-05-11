@@ -1,0 +1,56 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SKTS" [level=1] [ref=e6]
+      - navigation [ref=e7]:
+        - paragraph [ref=e8]: 工作空间
+        - list [ref=e9]:
+          - listitem [ref=e10] [cursor=pointer]:
+            - generic [ref=e11]: 📋
+            - generic [ref=e12]: 默认空间
+    - main [ref=e13]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - heading "Kanban 看板" [level=2] [ref=e28]
+          - generic [ref=e29]:
+            - textbox "输入任务标题，回车新建..." [ref=e30]
+            - button "+" [ref=e31] [cursor=pointer]
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - generic [ref=e35]:
+              - heading "待办" [level=3] [ref=e37]
+              - generic [ref=e38]: "2"
+            - generic [ref=e63]:
+              - generic [ref=e79] [cursor=pointer]:
+                - generic [ref=e80]:
+                  - heading "拖拽测试任务B" [level=3] [ref=e81]
+                  - button [ref=e83]:
+                    - img [ref=e85]
+                - generic [ref=e88]: 中
+                - paragraph [ref=e89]: 刚刚
+              - generic [ref=e66] [cursor=pointer]:
+                - generic [ref=e67]:
+                  - heading "拖拽测试任务A" [level=3] [ref=e68]
+                  - button [ref=e70]:
+                    - img [ref=e72]
+                - generic [ref=e75]: 中
+                - paragraph [ref=e76]: 刚刚
+          - generic [ref=e43]:
+            - generic [ref=e45]:
+              - heading "进行中" [level=3] [ref=e47]
+              - generic [ref=e48]: "0"
+            - generic [ref=e50]:
+              - paragraph [ref=e51]: —
+              - paragraph [ref=e52]: 暂无任务
+          - generic [ref=e53]:
+            - generic [ref=e55]:
+              - heading "已完成" [level=3] [ref=e57]
+              - generic [ref=e58]: "0"
+            - generic [ref=e60]:
+              - paragraph [ref=e61]: —
+              - paragraph [ref=e62]: 暂无任务
+  - generic [ref=e14]:
+    - generic "Toggle devtools panel" [ref=e15] [cursor=pointer]:
+      - img [ref=e16]
+    - generic "Toggle Component Inspector" [ref=e21] [cursor=pointer]:
+      - img [ref=e22]

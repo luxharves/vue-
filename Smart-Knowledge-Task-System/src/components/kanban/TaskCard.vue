@@ -1,5 +1,12 @@
 <template>
-  <div class="task-card" :class="`priority-${task.priority}`" @click="goDetail">
+  <div
+    class="task-card"
+    :class="[`priority-${task.priority}`, { 'is-dragging': dragging }]"
+    draggable="true"
+    @click="goDetail"
+    @dragstart="onDragStart"
+    @dragend="onDragEnd"
+  >
     <div class="card-accent"></div>
     <div class="card-body">
       <div class="card-top">
@@ -47,11 +54,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ArrowDown, Delete } from '@element-plus/icons-vue'
 import type { Task, TaskPriority, TaskStatus } from '@/types'
 import { useTaskStore } from '@/stores/taskStore'
+
+const DRAG_DATA_KEY = 'task-id'
 
 const props = defineProps<{
   task: Task
@@ -60,6 +69,19 @@ const props = defineProps<{
 const taskStore = useTaskStore()
 const router = useRouter()
 const route = useRoute()
+
+const dragging = ref(false)
+
+function onDragStart(e: DragEvent): void {
+  if (!e.dataTransfer) return
+  e.dataTransfer.setData(DRAG_DATA_KEY, props.task.id)
+  e.dataTransfer.effectAllowed = 'move'
+  dragging.value = true
+}
+
+function onDragEnd(): void {
+  dragging.value = false
+}
 
 const priorityMap: Record<TaskPriority, string> = {
   high: '高',
@@ -125,6 +147,11 @@ const formattedDate = computed(() => {
 .task-card:hover {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
+}
+
+.task-card.is-dragging {
+  opacity: 0.4;
+  transform: rotate(2deg) scale(0.97);
 }
 
 .card-accent {
