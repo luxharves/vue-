@@ -1,0 +1,64 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SKTS" [level=1] [ref=e6]
+      - navigation [ref=e7]:
+        - paragraph [ref=e8]: 工作空间
+        - list [ref=e9]:
+          - listitem [ref=e10] [cursor=pointer]:
+            - generic [ref=e11]: 📋
+            - generic [ref=e12]: 默认空间
+    - main [ref=e13]:
+      - generic [ref=e45]:
+        - button "返回" [ref=e47] [cursor=pointer]:
+          - generic [ref=e48]:
+            - img [ref=e50]
+            - text: 返回
+        - generic [ref=e52]:
+          - heading "图片测试" [level=2] [ref=e54] [cursor=pointer]
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - generic [ref=e57]: 状态
+              - generic [ref=e59] [cursor=pointer]:
+                - generic:
+                  - combobox [ref=e61]
+                  - generic [ref=e62]: 待办
+                - img [ref=e65]
+            - generic [ref=e67]:
+              - generic [ref=e68]: 优先级
+              - generic [ref=e70] [cursor=pointer]:
+                - generic:
+                  - combobox [ref=e72]
+                  - generic [ref=e73]: 中
+                - img [ref=e76]
+            - generic [ref=e78]:
+              - generic [ref=e79]: 标签
+              - generic [ref=e80]: —
+          - generic [ref=e81]: 创建于 5月12日 22:21 · 更新于 5月12日 22:21
+          - separator [ref=e82]
+          - generic [ref=e20]:
+            - generic [ref=e22]:
+              - generic [ref=e23]:
+                - generic [ref=e24]: ⠿
+                - button "image" [ref=e26] [cursor=pointer]
+              - img "block image" [ref=e83]
+              - button "更换图片" [active] [ref=e84] [cursor=pointer]:
+                - img [ref=e30]
+                - generic [ref=e32]: 更换图片
+              - generic "删除" [ref=e33] [cursor=pointer]: ×
+            - generic [ref=e34]:
+              - button "+ 文本" [ref=e35] [cursor=pointer]:
+                - generic [ref=e36]: + 文本
+              - button "+ 待办" [ref=e37] [cursor=pointer]:
+                - generic [ref=e38]: + 待办
+              - button "+ 代码" [ref=e39] [cursor=pointer]:
+                - generic [ref=e40]: + 代码
+              - button "+ 图片" [ref=e41] [cursor=pointer]:
+                - generic [ref=e42]: + 图片
+              - button "+ AI" [ref=e43] [cursor=pointer]:
+                - generic [ref=e44]: + AI
+  - generic [ref=e14]:
+    - generic "Toggle devtools panel" [ref=e15] [cursor=pointer]:
+      - img [ref=e16]
+    - generic "Toggle Component Inspector" [ref=e86] [cursor=pointer]:
+      - img [ref=e87]

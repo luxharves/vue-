@@ -2,7 +2,7 @@
 
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
-import type { Task, TaskStatus, TaskPriority } from '@/types'
+import type { Block, Task, TaskStatus, TaskPriority } from '@/types'
 import { storageService } from '@/services/storageService'
 
 const STORAGE_KEY = 'tasks'
@@ -52,9 +52,39 @@ export const useTaskStore = defineStore('task', () => {
     }
   }
 
+  function addBlock(taskId: string, block: Block): void {
+    const task = tasks.value.find((t) => t.id === taskId)
+    if (!task) return
+    task.blocks.push(block)
+    task.updatedAt = Date.now()
+  }
+
+  function updateBlock(taskId: string, blockId: string, patch: Partial<Pick<Block, 'type' | 'content'>>): void {
+    const task = tasks.value.find((t) => t.id === taskId)
+    if (!task) return
+    const block = task.blocks.find((b) => b.id === blockId)
+    if (!block) return
+    Object.assign(block, patch)
+    task.updatedAt = Date.now()
+  }
+
+  function deleteBlock(taskId: string, blockId: string): void {
+    const task = tasks.value.find((t) => t.id === taskId)
+    if (!task) return
+    task.blocks = task.blocks.filter((b) => b.id !== blockId)
+    task.updatedAt = Date.now()
+  }
+
+  function reorderBlocks(taskId: string, ordered: Block[]): void {
+    const task = tasks.value.find((t) => t.id === taskId)
+    if (!task) return
+    task.blocks = ordered
+    task.updatedAt = Date.now()
+  }
+
   watch(tasks, (val) => {//持久化watch监听tasks的变化，每当tasks发生变化时，就会调用storageService.save方法将最新的tasks数据保存到localStorage中，这样即使刷新页面，之前的任务数据也不会丢失。
     storageService.save(STORAGE_KEY, val)
   }, { deep: true })
 
-  return { tasks, tasksByStatus, addTask, updateTask, deleteTask, changeStatus }
+  return { tasks, tasksByStatus, addTask, updateTask, deleteTask, changeStatus, addBlock, updateBlock, deleteBlock, reorderBlocks }
 })
