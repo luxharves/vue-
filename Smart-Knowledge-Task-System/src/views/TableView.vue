@@ -218,8 +218,8 @@ const priorityMap: Record<TaskPriority, string> = {
 const allStatuses: TaskStatus[] = ['todo', 'doing', 'done']
 const allPriorities: TaskPriority[] = ['high', 'medium', 'low']
 
-const priorityOrder: Record<string, number> = { high: 3, medium: 2, low: 1 }
-const statusOrder: Record<string, number> = { todo: 1, doing: 2, done: 3 }
+const priorityOrder: Record<TaskPriority, number> = { high: 3, medium: 2, low: 1 }
+const statusOrder: Record<TaskStatus, number> = { todo: 1, doing: 2, done: 3 }
 
 function sortByPriority(a: Task, b: Task): number {
   return priorityOrder[a.priority] - priorityOrder[b.priority]
