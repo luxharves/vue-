@@ -1,0 +1,72 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SKTS" [level=1] [ref=e6]
+      - navigation [ref=e7]:
+        - paragraph [ref=e8]: 工作空间
+        - list [ref=e9]:
+          - listitem [ref=e10] [cursor=pointer]:
+            - generic [ref=e11]: 📋
+            - generic [ref=e12]: 默认空间
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - heading "表格视图" [level=2] [ref=e16]
+          - paragraph [ref=e17]: 数据来自 taskStore，共 2 条任务
+        - generic [ref=e19]:
+          - table [ref=e21]:
+            - rowgroup [ref=e29]:
+              - row "标题 状态 优先级 标签 创建时间 操作" [ref=e30]:
+                - columnheader "标题" [ref=e31]:
+                  - generic [ref=e32]: 标题
+                - columnheader "状态" [ref=e33]:
+                  - generic [ref=e34]: 状态
+                - columnheader "优先级" [ref=e35]:
+                  - generic [ref=e36]: 优先级
+                - columnheader "标签" [ref=e37]:
+                  - generic [ref=e38]: 标签
+                - columnheader "创建时间" [ref=e39]:
+                  - generic [ref=e40]: 创建时间
+                - columnheader "操作" [ref=e41]:
+                  - generic [ref=e42]: 操作
+          - table [ref=e47]:
+            - rowgroup [ref=e55]:
+              - row "表格测试任务B 待办 中 — 5月12日 17:23" [ref=e56]:
+                - cell "表格测试任务B" [ref=e57]:
+                  - generic [ref=e58]: 表格测试任务B
+                - cell "待办" [ref=e59]:
+                  - generic [ref=e60]: 待办
+                - cell "中" [ref=e61]:
+                  - generic [ref=e63]: 中
+                - cell "—" [ref=e65]:
+                  - generic [ref=e66]: —
+                - cell "5月12日 17:23" [ref=e67]:
+                  - generic [ref=e68]: 5月12日 17:23
+                - cell [ref=e69]:
+                  - generic [ref=e71]:
+                    - button [ref=e73] [cursor=pointer]:
+                      - img [ref=e76]
+                    - button [ref=e78] [cursor=pointer]:
+                      - img [ref=e81]
+              - row "表格测试任务A 待办 中 — 5月12日 17:23" [ref=e83]:
+                - cell "表格测试任务A" [ref=e84]:
+                  - generic [ref=e85]: 表格测试任务A
+                - cell "待办" [ref=e86]:
+                  - generic [ref=e87]: 待办
+                - cell "中" [ref=e88]:
+                  - generic [ref=e90]: 中
+                - cell "—" [ref=e92]:
+                  - generic [ref=e93]: —
+                - cell "5月12日 17:23" [ref=e94]:
+                  - generic [ref=e95]: 5月12日 17:23
+                - cell [ref=e96]:
+                  - generic [ref=e98]:
+                    - button [ref=e100] [cursor=pointer]:
+                      - img [ref=e103]
+                    - button [ref=e105] [cursor=pointer]:
+                      - img [ref=e108]
+  - generic [ref=e110]:
+    - generic "Toggle devtools panel" [ref=e111] [cursor=pointer]:
+      - img [ref=e112]
+    - generic "Toggle Component Inspector" [ref=e117] [cursor=pointer]:
+      - img [ref=e118]

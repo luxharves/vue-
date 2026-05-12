@@ -26,6 +26,15 @@
                 <span class="status-dot" :class="`dot-${opt.value}`"></span>
                 {{ opt.label }}
               </el-dropdown-item>
+              <el-dropdown-item
+                v-for="p in availablePriorities"
+                :key="`p-${p.value}`"
+                :command="`priority:${p.value}`"
+                divided
+              >
+                <span class="priority-dot-sm" :class="`dot-p-${p.value}`"></span>
+                {{ p.label }}
+              </el-dropdown-item>
               <el-dropdown-item command="delete" divided class="delete-option">
                 <el-icon><Delete /></el-icon>
                 <span>删除任务</span>
@@ -103,11 +112,22 @@ const availableStatuses = computed(() =>
     .map((s) => ({ value: s, label: statusMap[s] }))
 )
 
+const allPriorities: TaskPriority[] = ['high', 'medium', 'low']
+
+const availablePriorities = computed(() =>
+  allPriorities
+    .filter((p) => p !== props.task.priority)
+    .map((p) => ({ value: p, label: priorityMap[p] }))
+)
+
 const priorityLabel = computed(() => priorityMap[props.task.priority] ?? props.task.priority)
 
 function handleCommand(cmd: string): void {
   if (cmd === 'delete') {
     taskStore.deleteTask(props.task.id)
+  } else if (cmd.startsWith('priority:')) {
+    const newPriority = cmd.replace('priority:', '') as TaskPriority
+    taskStore.updateTask(props.task.id, { priority: newPriority })
   } else {
     taskStore.changeStatus(props.task.id, cmd as TaskStatus)
   }
@@ -115,7 +135,7 @@ function handleCommand(cmd: string): void {
 
 function goDetail(): void {
   router.push(`/workspace/${route.params.id}/task/${props.task.id}`)
-}
+}//路由控制器，router.push跳转页面
 
 const formattedDate = computed(() => {
   const d = new Date(props.task.createdAt)
@@ -250,6 +270,19 @@ const formattedDate = computed(() => {
 .dot-todo  { background: #4a90d9; }
 .dot-doing { background: #f39c12; }
 .dot-done  { background: #27ae60; }
+
+.priority-dot-sm {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.dot-p-high   { background: #e74c3c; }
+.dot-p-medium { background: #f39c12; }
+.dot-p-low    { background: #27ae60; }
 
 /* Delete option */
 .delete-option {

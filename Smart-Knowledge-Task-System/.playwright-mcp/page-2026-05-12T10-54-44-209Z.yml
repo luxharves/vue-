@@ -1,0 +1,128 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - heading "SKTS" [level=1] [ref=e6]
+      - navigation [ref=e7]:
+        - paragraph [ref=e8]: 工作空间
+        - list [ref=e9]:
+          - listitem [ref=e10] [cursor=pointer]:
+            - generic [ref=e11]: 📋
+            - generic [ref=e12]: 默认空间
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - heading "表格视图" [level=2] [ref=e16]
+          - paragraph [ref=e17]: 共 4 / 4 条任务
+        - generic [ref=e18]:
+          - generic [ref=e20]:
+            - img [ref=e23]
+            - textbox "搜索任务标题..." [ref=e25]
+          - generic [ref=e28] [cursor=pointer]:
+            - generic:
+              - combobox [ref=e30]
+              - generic [ref=e31]: 状态
+            - img [ref=e34]
+          - generic [ref=e37] [cursor=pointer]:
+            - generic:
+              - combobox [ref=e39]
+              - generic [ref=e40]: 优先级
+            - img [ref=e43]
+        - generic [ref=e46]:
+          - table [ref=e48]:
+            - rowgroup [ref=e56]:
+              - row "标题 状态 优先级 标签 创建时间 操作" [ref=e57]:
+                - columnheader "标题" [ref=e58]:
+                  - generic [ref=e59]: 标题
+                - columnheader "状态" [ref=e60]:
+                  - generic [ref=e61]: 状态
+                - columnheader "优先级" [ref=e62]:
+                  - generic [ref=e63]: 优先级
+                - columnheader "标签" [ref=e64]:
+                  - generic [ref=e65]: 标签
+                - columnheader "创建时间" [ref=e66]:
+                  - generic [ref=e67]: 创建时间
+                - columnheader "操作" [ref=e68]:
+                  - generic [ref=e69]: 操作
+          - table [ref=e74]:
+            - rowgroup [ref=e82]:
+              - row "修复导航栏 Bug 待办 高 前端 5月12日 18:54" [ref=e83]:
+                - cell "修复导航栏 Bug" [ref=e84]:
+                  - generic [ref=e85]: 修复导航栏 Bug
+                - cell "待办" [ref=e86]:
+                  - generic [ref=e87]: 待办
+                - cell "高" [ref=e88]:
+                  - generic [ref=e90]: 高
+                - cell "前端" [ref=e92]:
+                  - generic [ref=e93]:
+                    - generic:
+                      - generic: 前端
+                - cell "5月12日 18:54" [ref=e94]:
+                  - generic [ref=e95]: 5月12日 18:54
+                - cell [ref=e96]:
+                  - generic [ref=e98]:
+                    - button [ref=e100] [cursor=pointer]:
+                      - img [ref=e103]
+                    - button [ref=e105] [cursor=pointer]:
+                      - img [ref=e108]
+              - row "编写 README 文档 进行中 低 文档 5月12日 18:54" [ref=e110]:
+                - cell "编写 README 文档" [ref=e111]:
+                  - generic [ref=e112]: 编写 README 文档
+                - cell "进行中" [ref=e113]:
+                  - generic [ref=e114]: 进行中
+                - cell "低" [ref=e115]:
+                  - generic [ref=e117]: 低
+                - cell "文档" [ref=e119]:
+                  - generic [ref=e120]:
+                    - generic:
+                      - generic: 文档
+                - cell "5月12日 18:54" [ref=e121]:
+                  - generic [ref=e122]: 5月12日 18:54
+                - cell [ref=e123]:
+                  - generic [ref=e125]:
+                    - button [ref=e127] [cursor=pointer]:
+                      - img [ref=e130]
+                    - button [ref=e132] [cursor=pointer]:
+                      - img [ref=e135]
+              - row "实现用户登录模块 已完成 中 功能 5月12日 18:54" [ref=e137]:
+                - cell "实现用户登录模块" [ref=e138]:
+                  - generic [ref=e139]: 实现用户登录模块
+                - cell "已完成" [ref=e140]:
+                  - generic [ref=e141]: 已完成
+                - cell "中" [ref=e142]:
+                  - generic [ref=e144]: 中
+                - cell "功能" [ref=e146]:
+                  - generic [ref=e147]:
+                    - generic:
+                      - generic: 功能
+                - cell "5月12日 18:54" [ref=e148]:
+                  - generic [ref=e149]: 5月12日 18:54
+                - cell [ref=e150]:
+                  - generic [ref=e152]:
+                    - button [ref=e154] [cursor=pointer]:
+                      - img [ref=e157]
+                    - button [ref=e159] [cursor=pointer]:
+                      - img [ref=e162]
+              - row "设计系统首页布局 待办 高 设计 5月12日 18:54" [ref=e164]:
+                - cell "设计系统首页布局" [ref=e165]:
+                  - generic [ref=e166]: 设计系统首页布局
+                - cell "待办" [ref=e167]:
+                  - generic [ref=e168]: 待办
+                - cell "高" [ref=e169]:
+                  - generic [ref=e171]: 高
+                - cell "设计" [ref=e173]:
+                  - generic [ref=e174]:
+                    - generic:
+                      - generic: 设计
+                - cell "5月12日 18:54" [ref=e175]:
+                  - generic [ref=e176]: 5月12日 18:54
+                - cell [ref=e177]:
+                  - generic [ref=e179]:
+                    - button [ref=e181] [cursor=pointer]:
+                      - img [ref=e184]
+                    - button [ref=e186] [cursor=pointer]:
+                      - img [ref=e189]
+  - generic [ref=e191]:
+    - generic "Toggle devtools panel" [ref=e192] [cursor=pointer]:
+      - img [ref=e193]
+    - generic "Toggle Component Inspector" [ref=e198] [cursor=pointer]:
+      - img [ref=e199]
