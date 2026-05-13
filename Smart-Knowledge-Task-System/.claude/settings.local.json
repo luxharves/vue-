@@ -18,7 +18,8 @@
       "Bash(npx typescript-language-server *)",
       "Bash(claude plugins *)",
       "mcp__plugin_playwright_playwright__browser_file_upload",
-      "mcp__plugin_playwright_playwright__browser_close"
+      "mcp__plugin_playwright_playwright__browser_close",
+      "Bash(xargs wc -l)"
     ]
   }
 }

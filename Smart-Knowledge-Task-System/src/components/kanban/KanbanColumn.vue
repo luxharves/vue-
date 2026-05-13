@@ -17,7 +17,6 @@
 
     <div class="column-body">
       <div v-if="tasks.length === 0" class="column-empty">
-        <p class="empty-icon">—</p>
         <p class="empty-text">暂无任务</p>
       </div>
       <TransitionGroup v-else name="card-list" tag="div" class="card-list">
@@ -45,40 +44,17 @@ const props = defineProps<{
 }>()
 
 const taskStore = useTaskStore()
-
 const dragOver = ref(false)
 let enterCount = 0
 
-const statusMap: Record<TaskStatus, string> = {
-  todo: '待办',
-  doing: '进行中',
-  done: '已完成',
-}
-
+const statusMap: Record<TaskStatus, string> = { todo: '待办', doing: '进行中', done: '已完成' }
 const statusLabel = computed(() => statusMap[props.status])
 
-function onDragOver(e: DragEvent): void {
-  if (e.dataTransfer) {
-    e.dataTransfer.dropEffect = 'move'
-  }
-}
-
-function onDragEnter(): void {
-  enterCount++
-  dragOver.value = true
-}
-
-function onDragLeave(): void {
-  enterCount--
-  if (enterCount <= 0) {
-    enterCount = 0
-    dragOver.value = false
-  }
-}
-
+function onDragOver(e: DragEvent): void { if (e.dataTransfer) e.dataTransfer.dropEffect = 'move' }
+function onDragEnter(): void { enterCount++; dragOver.value = true }
+function onDragLeave(): void { enterCount--; if (enterCount <= 0) { enterCount = 0; dragOver.value = false } }
 function onDrop(e: DragEvent): void {
-  dragOver.value = false
-  enterCount = 0
+  dragOver.value = false; enterCount = 0
   const taskId = e.dataTransfer?.getData(DRAG_DATA_KEY)
   if (!taskId) return
   taskStore.changeStatus(taskId, props.status)
@@ -89,21 +65,21 @@ function onDrop(e: DragEvent): void {
 .kanban-column {
   display: flex;
   flex-direction: column;
-  width: 272px;
+  width: 278px;
   flex-shrink: 0;
-  border-radius: 12px;
-  background: #f5f6fa;
+  border-radius: 14px;
+  background: #f8f9fb;
   max-height: 100%;
   transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .kanban-column.is-drag-over {
-  background: #eaf0fd;
-  box-shadow: inset 0 0 0 2px #409eff;
+  background: #eef1ff;
+  box-shadow: inset 0 0 0 2px #5b8def;
 }
 
 .column-header {
-  padding: 16px 14px 10px;
+  padding: 18px 16px 12px;
   flex-shrink: 0;
 }
 
@@ -114,37 +90,37 @@ function onDrop(e: DragEvent): void {
 }
 
 .column-dot {
-  width: 8px;
-  height: 8px;
+  width: 8px; height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.column-todo .column-dot    { background: #4a90d9; }
-.column-doing .column-dot   { background: #f39c12; }
-.column-done .column-dot    { background: #27ae60; }
+.column-todo .column-dot    { background: #5b8def; }
+.column-doing .column-dot   { background: #f5b041; }
+.column-done .column-dot    { background: #30a46c; }
 
 .column-title {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
-  color: #1a1a2e;
+  color: #1e1e20;
   margin: 0;
   flex: 1;
+  letter-spacing: -0.01em;
 }
 
 .column-count {
   font-size: 12px;
   font-weight: 500;
-  color: #888;
-  background: #e8eaee;
-  padding: 1px 8px;
+  color: #8e8e93;
+  background: #ecedf0;
+  padding: 1px 9px;
   border-radius: 10px;
   min-width: 22px;
   text-align: center;
 }
 
 .column-body {
-  padding: 0 10px 12px;
+  padding: 0 12px 14px;
   flex: 1;
   overflow: auto;
   min-height: 0;
@@ -158,40 +134,33 @@ function onDrop(e: DragEvent): void {
 
 .column-empty {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 32px 16px;
-  border: 1.5px dashed #d5d8e0;
-  border-radius: 8px;
-}
-
-.empty-icon {
-  font-size: 20px;
-  color: #c5c8d0;
-  margin: 0 0 6px 0;
+  padding: 36px 16px;
+  border: 1.5px dashed #e2e4e9;
+  border-radius: 10px;
 }
 
 .empty-text {
-  font-size: 12px;
-  color: #b0b3bc;
+  font-size: 12.5px;
+  color: #c0c4cc;
   margin: 0;
 }
 
 /* TransitionGroup */
 .card-list-enter-active,
 .card-list-leave-active {
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card-list-enter-from {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(6px) scale(0.98);
 }
 
 .card-list-leave-to {
   opacity: 0;
-  transform: translateX(12px);
+  transform: translateX(8px);
 }
 
 .card-list-leave-active {

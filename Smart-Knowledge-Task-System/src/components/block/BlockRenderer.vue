@@ -28,7 +28,7 @@
     <!-- text -->
     <template v-if="block.type === 'text'">
       <textarea ref="textareaRef" :value="textContent" class="block-textarea" :rows="1"
-        placeholder="输入文本..." @input="onTextInput" @keydown="handleKey" />
+        placeholder="输入文本，按 / 选择类型..." @input="onTextInput" @keydown="handleKey" />
       <button v-if="textContent" class="btn-polish" @click.stop="onPolish" :disabled="polishing" title="AI 优化">
         <el-icon><MagicStick /></el-icon>
       </button>
@@ -45,6 +45,23 @@
         <el-icon><MagicStick /></el-icon>
       </button>
     </template>
+
+    <!-- Slash 命令菜单 -->
+    <div v-if="slashVisible" class="slash-menu">
+      <div
+        v-for="(entry, idx) in slashItems"
+        :key="entry.type"
+        class="slash-item"
+        :class="{ highlighted: idx === slashIdx }"
+        @click.stop="onSlashSelect(entry.type)"
+        @mouseenter="slashIdx = idx"
+      >
+        <span class="slash-icon">{{ entry.icon }}</span>
+        <span class="slash-label">{{ entry.label }}</span>
+        <span class="slash-desc">{{ entry.description }}</span>
+      </div>
+      <div v-if="slashItems.length === 0" class="slash-empty">无匹配结果</div>
+    </div>
 
     <!-- code -->
     <template v-else-if="block.type === 'code'">
@@ -93,10 +110,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, nextTick } from 'vue'
 import { Plus, MagicStick } from '@element-plus/icons-vue'
 import type { Block, BlockType } from '@/types'
 import { aiService } from '@/services/aiService'
+import { searchRegistry } from '@/components/block/blockRegistry'
 
 const DRAG_DATA_KEY = 'block-id'
 
@@ -138,6 +156,38 @@ const todoText = computed(() => {
   return c?.text ?? ''
 })
 
+// Slash 命令
+const slashVisible = ref(false)
+const slashQuery = ref('')
+const slashIdx = ref(0)
+const slashItems = computed(() => searchRegistry(slashQuery.value))
+
+function checkSlash(value: string): void {
+  if (value.length === 1 && value === '/') {
+    slashVisible.value = true
+    slashQuery.value = ''
+    slashIdx.value = 0
+  } else if (slashVisible.value) {
+    const idx = value.indexOf('/')
+    if (idx === -1) { slashVisible.value = false; return }
+    slashQuery.value = value.slice(idx + 1)
+    slashIdx.value = 0
+  }
+}
+
+function onSlashSelect(type: BlockType): void {
+  props.block.type !== type && emit('switchType', props.block.id, type)
+  slashVisible.value = false
+}
+
+function handleSlashKey(e: KeyboardEvent): void {
+  if (!slashVisible.value) return
+  if (e.key === 'ArrowDown') { e.preventDefault(); slashIdx.value = Math.min(slashIdx.value + 1, slashItems.value.length - 1) }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); slashIdx.value = Math.max(slashIdx.value - 1, 0) }
+  else if (e.key === 'Enter') { e.preventDefault(); if (slashItems.value[slashIdx.value]) onSlashSelect(slashItems.value[slashIdx.value].type) }
+  else if (e.key === 'Escape') { e.preventDefault(); slashVisible.value = false }
+}
+
 function setActive(): void {
   emit('setActive', props.block.id)
   setTimeout(() => textareaRef.value?.focus(), 0)
@@ -151,6 +201,7 @@ function onTextInput(e: Event): void {
   const el = e.target as HTMLTextAreaElement
   el.style.height = 'auto'
   el.style.height = el.scrollHeight + 'px'
+  checkSlash(el.value)
   emitUpdate(el.value)
 }
 
@@ -158,6 +209,7 @@ function onTodoInput(e: Event): void {
   const el = e.target as HTMLTextAreaElement
   el.style.height = 'auto'
   el.style.height = el.scrollHeight + 'px'
+  checkSlash(el.value)
   emitUpdate({ text: el.value, checked: todoChecked.value })
 }
 
@@ -190,6 +242,7 @@ function onSwitchType(newType: BlockType): void {
 }
 
 function handleKey(e: KeyboardEvent): void {
+  if (slashVisible.value) { handleSlashKey(e); return }
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); emit('newBlock', props.block.id) }
 }
 
@@ -209,14 +262,19 @@ async function onPolish(): Promise<void> {
   if (!text) return
   polishing.value = true
   try {
-    const polished = await aiService.polish(text, props.block.type as 'text' | 'todo')
-    if (polished) {
+    let result = ''
+    await aiService.chatStream(
+      `请优化以下${props.block.type === 'todo' ? '待办事项' : '文本'}，使其更清晰准确，保持原意：\n\n${text}`,
+      (chunk) => { result = chunk },
+      { systemPrompt: '你是一个文字编辑助手。只返回优化后的文本，不要加解释。', temperature: 0.4 }
+    )
+    if (result) {
       const content = props.block.type === 'todo'
-        ? { text: polished, checked: todoChecked.value }
-        : polished
+        ? { text: result, checked: todoChecked.value }
+        : result
       emitUpdate(content)
     }
-  } catch (e) {
+  } catch {
     // 静默失败
   } finally {
     polishing.value = false
@@ -238,13 +296,15 @@ async function onAiGenerate(): Promise<void> {
   const prompt = aiPrompt.value.trim()
   if (!prompt) return
   aiGenerating.value = true
+  await nextTick()
+  emitUpdate('') // 初始空内容，让 ai-result 进入"生成中"状态
   try {
-    const result = await aiService.chat(prompt)
-    if (result) {
-      emitUpdate(result)
-      aiPrompt.value = ''
-    }
-  } catch (e) {
+    await aiService.chatStream(
+      prompt,
+      (chunk) => emitUpdate(chunk),
+    )
+    aiPrompt.value = ''
+  } catch {
     // 静默失败
   } finally {
     aiGenerating.value = false
@@ -468,6 +528,62 @@ function onDragEnd(): void { dragging.value = false }
 }
 
 /* ai */
+/* Slash menu */
+.slash-menu {
+  position: absolute;
+  left: 40px;
+  bottom: calc(100% + 4px);
+  z-index: 100;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  padding: 4px;
+  min-width: 220px;
+  max-height: 260px;
+  overflow: auto;
+}
+
+.slash-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.1s;
+}
+
+.slash-item:hover, .slash-item.highlighted {
+  background: #f0f3f9;
+}
+
+.slash-icon {
+  font-size: 16px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.slash-label {
+  font-weight: 550;
+  color: #1e1e20;
+  flex-shrink: 0;
+}
+
+.slash-desc {
+  font-size: 11px;
+  color: #b0b3ba;
+  margin-left: auto;
+}
+
+.slash-empty {
+  padding: 12px;
+  text-align: center;
+  font-size: 12px;
+  color: #bbb;
+}
+
 .ai-badge {
   display: inline-block;
   font-size: 10px; font-weight: 700;

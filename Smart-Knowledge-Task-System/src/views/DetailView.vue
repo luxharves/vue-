@@ -90,11 +90,12 @@
           />
         </TransitionGroup>
         <div class="add-block-btns">
-          <el-button size="small" text @click="addBlock('text')">+ 文本</el-button>
-          <el-button size="small" text @click="addBlock('todo')">+ 待办</el-button>
-          <el-button size="small" text @click="addBlock('code')">+ 代码</el-button>
-          <el-button size="small" text @click="addBlock('image')">+ 图片</el-button>
-          <el-button size="small" text @click="addBlock('ai')">+ AI</el-button>
+          <el-button
+            v-for="entry in blockRegistry"
+            :key="entry.type"
+            size="small" text
+            @click="addBlock(entry.type)"
+          >+ {{ entry.label }}</el-button>
         </div>
       </div>
     </div>
@@ -114,6 +115,7 @@ import { aiService } from '@/services/aiService'
 import type { BlockType, TaskPriority, TaskStatus } from '@/types'
 import { useTaskStore } from '@/stores/taskStore'
 import BlockRenderer from '@/components/block/BlockRenderer.vue'
+import { blockRegistry } from '@/components/block/blockRegistry'
 
 const taskStore = useTaskStore()
 const router = useRouter()
@@ -263,9 +265,23 @@ async function handleAiSummary(): Promise<void> {
   if (!task.value) return
   aiError.value = ''
   aiLoading.value = 'summary'
+  const blockId = crypto.randomUUID()
+  taskStore.addBlock(task.value.id, { id: blockId, type: 'ai', content: '' })
   try {
-    const result = await aiService.summarize(task.value.blocks)
-    taskStore.addBlock(task.value.id, { id: crypto.randomUUID(), type: 'ai', content: result })
+    const text = task.value.blocks
+      .filter((b) => b.type === 'text' || b.type === 'todo' || b.type === 'code')
+      .map((b) => {
+        if (typeof b.content === 'string') return b.content
+        if (typeof b.content === 'object' && b.content !== null && 'text' in b.content) return (b.content as { text: string }).text
+        return ''
+      })
+      .filter(Boolean).join('\n')
+    if (!text.trim()) { aiError.value = '没有可总结的内容'; return }
+    await aiService.chatStream(
+      `请用简洁的中文总结以下内容要点（不超过 200 字）：\n\n${text}`,
+      (chunk) => taskStore.updateBlock(task.value!.id, blockId, { content: chunk }),
+      { systemPrompt: '你是一个任务管理助手的摘要生成器。请用简洁、清晰的中文总结内容，提取关键信息。', temperature: 0.3 }
+    )
   } catch (e) {
     aiError.value = (e as Error).message
   } finally {

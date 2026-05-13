@@ -58,6 +58,75 @@ export const aiService = {
     return data.choices?.[0]?.message?.content?.trim() ?? ''
   },
 
+  /** 流式调用 — 逐 chunk 回调 */
+  async chatStream(
+    prompt: string,
+    onChunk: (text: string) => void,
+    options?: { systemPrompt?: string; temperature?: number }
+  ): Promise<string> {
+    const config = getConfig()
+    if (!config.apiKey) throw new Error('请先配置 AI API Key')
+
+    const messages: { role: string; content: string }[] = []
+    if (options?.systemPrompt) messages.push({ role: 'system', content: options.systemPrompt })
+    messages.push({ role: 'user', content: prompt })
+
+    const res = await fetch(`${config.baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: config.model,
+        messages,
+        temperature: options?.temperature ?? 0.7,
+        max_tokens: 2000,
+        stream: true,
+      }),
+    })
+
+    if (!res.ok) {
+      const err = await res.text().catch(() => '')
+      throw new Error(`AI 请求失败 (${res.status}): ${err}`)
+    }
+
+    const reader = res.body?.getReader()
+    if (!reader) throw new Error('响应体不可读')
+
+    const decoder = new TextDecoder()
+    let full = ''
+    let buffer = ''
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+
+      buffer += decoder.decode(value, { stream: true })
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+
+      for (const line of lines) {
+        const trimmed = line.trim()
+        if (!trimmed || !trimmed.startsWith('data: ')) continue
+        const data = trimmed.slice(6)
+        if (data === '[DONE]') break
+        try {
+          const parsed = JSON.parse(data)
+          const chunk = parsed.choices?.[0]?.delta?.content
+          if (chunk) {
+            full += chunk
+            onChunk(full)
+          }
+        } catch {
+          // 跳过解析失败的行
+        }
+      }
+    }
+
+    return full
+  },
+
   /** 总结任务的所有 Block 内容 */
   async summarize(blocks: { type: string; content: unknown }[]): Promise<string> {
     const text = blocks
