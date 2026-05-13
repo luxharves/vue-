@@ -29,6 +29,9 @@
     <template v-if="block.type === 'text'">
       <textarea ref="textareaRef" :value="textContent" class="block-textarea" :rows="1"
         placeholder="输入文本..." @input="onTextInput" @keydown="handleKey" />
+      <button v-if="textContent" class="btn-polish" @click.stop="onPolish" :disabled="polishing" title="AI 优化">
+        <el-icon><MagicStick /></el-icon>
+      </button>
     </template>
 
     <!-- todo -->
@@ -38,6 +41,9 @@
         <textarea ref="textareaRef" :value="todoText" class="block-textarea" :class="{ 'todo-done': todoChecked }"
           :rows="1" placeholder="待办事项..." @input="onTodoInput" @keydown="handleKey" />
       </label>
+      <button v-if="todoText" class="btn-polish" @click.stop="onPolish" :disabled="polishing" title="AI 优化">
+        <el-icon><MagicStick /></el-icon>
+      </button>
     </template>
 
     <!-- code -->
@@ -68,8 +74,17 @@
     <!-- ai -->
     <template v-else-if="block.type === 'ai'">
       <span class="ai-badge">AI</span>
-      <textarea ref="textareaRef" :value="textContent" class="block-textarea" :rows="1"
-        placeholder="AI 生成内容..." @input="onTextInput" @keydown="handleKey" />
+      <template v-if="textContent">
+        <div class="ai-result">{{ textContent }}</div>
+      </template>
+      <template v-else>
+        <textarea ref="textareaRef" v-model="aiPrompt" class="block-textarea" :rows="1"
+          placeholder="输入提示词，按 Ctrl+Enter 生成..." @keydown="onAiKey" />
+        <button class="btn-generate" @click.stop="onAiGenerate" :disabled="aiGenerating || !aiPrompt.trim()">
+          <el-icon><MagicStick /></el-icon>
+          <span>{{ aiGenerating ? '生成中...' : '生成' }}</span>
+        </button>
+      </template>
     </template>
 
     <!-- 右侧删除按钮 -->
@@ -79,8 +94,9 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, MagicStick } from '@element-plus/icons-vue'
 import type { Block, BlockType } from '@/types'
+import { aiService } from '@/services/aiService'
 
 const DRAG_DATA_KEY = 'block-id'
 
@@ -186,6 +202,55 @@ function onDragStart(e: DragEvent): void {
 
 function onDelete(): void { emit('deleteBlock', props.block.id) }
 
+const polishing = ref(false)
+
+async function onPolish(): Promise<void> {
+  const text = props.block.type === 'todo' ? todoText.value : textContent.value
+  if (!text) return
+  polishing.value = true
+  try {
+    const polished = await aiService.polish(text, props.block.type as 'text' | 'todo')
+    if (polished) {
+      const content = props.block.type === 'todo'
+        ? { text: polished, checked: todoChecked.value }
+        : polished
+      emitUpdate(content)
+    }
+  } catch (e) {
+    // 静默失败
+  } finally {
+    polishing.value = false
+  }
+}
+
+// AI Block
+const aiPrompt = ref('')
+const aiGenerating = ref(false)
+
+function onAiKey(e: KeyboardEvent): void {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault()
+    onAiGenerate()
+  }
+}
+
+async function onAiGenerate(): Promise<void> {
+  const prompt = aiPrompt.value.trim()
+  if (!prompt) return
+  aiGenerating.value = true
+  try {
+    const result = await aiService.chat(prompt)
+    if (result) {
+      emitUpdate(result)
+      aiPrompt.value = ''
+    }
+  } catch (e) {
+    // 静默失败
+  } finally {
+    aiGenerating.value = false
+  }
+}
+
 function onDragEnd(): void { dragging.value = false }
 </script>
 
@@ -266,6 +331,67 @@ function onDragEnd(): void { dragging.value = false }
   color: #6b7280;
   background: #f3f4f6;
 }
+
+/* Polish/AI buttons */
+.btn-polish, .btn-generate {
+  position: absolute;
+  right: 36px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 5px;
+  background: none;
+  color: #c0c4cc;
+  cursor: pointer;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.12s, color 0.12s, background 0.12s;
+}
+
+.block-renderer:hover .btn-polish,
+.block-renderer:hover .btn-generate { opacity: 0.55; }
+
+.btn-polish:hover, .btn-generate:hover {
+  opacity: 1 !important;
+  color: #5b6abf;
+  background: #f0f1fd;
+}
+
+.btn-polish:disabled, .btn-generate:disabled {
+  cursor: not-allowed;
+  opacity: 0.3 !important;
+}
+
+/* AI Block */
+.ai-result {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.btn-generate {
+  position: static;
+  transform: none;
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px 10px;
+  width: auto;
+  height: auto;
+  font-size: 12px;
+  color: #5b6abf;
+  opacity: 0.7;
+  margin-top: 6px;
+  border-radius: 6px;
+}
+
+.btn-generate:hover { opacity: 1; background: #f0f1fd; }
 
 .block-textarea {
   width: 100%;

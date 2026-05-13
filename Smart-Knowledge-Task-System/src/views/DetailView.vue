@@ -51,6 +51,19 @@
         <span v-if="task.updatedAt !== task.createdAt"> · 更新于 {{ formatDate(task.updatedAt) }}</span>
       </div>
 
+      <!-- AI 操作 -->
+      <div class="ai-actions">
+        <el-button size="small" :loading="aiLoading === 'summary'" @click="handleAiSummary">
+          <el-icon><MagicStick /></el-icon>
+          AI 总结
+        </el-button>
+        <el-button size="small" :loading="aiLoading === 'tags'" @click="handleAiTags">
+          <el-icon><MagicStick /></el-icon>
+          生成标签
+        </el-button>
+        <span v-if="aiError" class="ai-error">{{ aiError }}</span>
+      </div>
+
       <el-divider />
 
       <!-- Block 列表 -->
@@ -96,7 +109,8 @@
 <script setup lang="ts">
 import { computed, ref, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { ArrowLeft } from '@element-plus/icons-vue'
+import { ArrowLeft, MagicStick } from '@element-plus/icons-vue'
+import { aiService } from '@/services/aiService'
 import type { BlockType, TaskPriority, TaskStatus } from '@/types'
 import { useTaskStore } from '@/stores/taskStore'
 import BlockRenderer from '@/components/block/BlockRenderer.vue'
@@ -241,6 +255,41 @@ function onBlockDelete(blockId: string): void {
   }
 }
 
+// AI 操作
+const aiLoading = ref<string | null>(null)
+const aiError = ref('')
+
+async function handleAiSummary(): Promise<void> {
+  if (!task.value) return
+  aiError.value = ''
+  aiLoading.value = 'summary'
+  try {
+    const result = await aiService.summarize(task.value.blocks)
+    taskStore.addBlock(task.value.id, { id: crypto.randomUUID(), type: 'ai', content: result })
+  } catch (e) {
+    aiError.value = (e as Error).message
+  } finally {
+    aiLoading.value = null
+  }
+}
+
+async function handleAiTags(): Promise<void> {
+  if (!task.value) return
+  aiError.value = ''
+  aiLoading.value = 'tags'
+  try {
+    const newTags = await aiService.generateTags(task.value.title, task.value.blocks)
+    if (newTags.length) {
+      const merged = [...new Set([...task.value.tags, ...newTags])]
+      taskStore.updateTask(task.value.id, { tags: merged })
+    }
+  } catch (e) {
+    aiError.value = (e as Error).message
+  } finally {
+    aiLoading.value = null
+  }
+}
+
 function formatDate(ts: number): string {
   return new Date(ts).toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
@@ -284,6 +333,17 @@ function goBack(): void {
 .no-data { color: #ccc; font-size: 13px; }
 
 .detail-meta { font-size: 12px; color: #bbb; }
+
+.ai-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-error {
+  font-size: 12px;
+  color: #e74c3c;
+}
 
 /* Blocks */
 .blocks-section { display: flex; flex-direction: column; gap: 4px; }

@@ -1,9 +1,12 @@
 <template>
   <div class="table-view">
     <div class="view-header">
-      <h2 class="view-title">表格视图</h2>
+      <div class="header-top">
+        <h2 class="view-title">表格</h2>
+        <ViewSwitcher />
+      </div>
       <p class="view-desc">
-        共 {{ filteredTasks.length }} / {{ taskStore.tasks.length }} 条任务
+        共 {{ filteredTasks.length }} / {{ taskStore.currentTasks.length }} 条任务
       </p>
     </div>
 
@@ -159,6 +162,7 @@ import { ArrowDown, Delete, Search } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import type { Task, TaskPriority, TaskStatus } from '@/types'
 import { useTaskStore } from '@/stores/taskStore'
+import ViewSwitcher from '@/components/common/ViewSwitcher.vue'
 
 const taskStore = useTaskStore()
 const router = useRouter()
@@ -179,7 +183,7 @@ const hasFilters = computed(() =>
 )
 
 const filteredTasks = computed(() => {
-  let tasks = taskStore.tasks
+  let tasks = taskStore.currentTasks
 
   if (searchText.value) {
     const kw = searchText.value.toLowerCase()
@@ -309,11 +313,18 @@ function goDetail(taskId: string): void {
   margin-bottom: 12px;
 }
 
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
 .view-title {
   font-size: 20px;
   font-weight: 700;
   color: #1a1a2e;
-  margin: 0 0 4px 0;
+  margin: 0;
 }
 
 .view-desc {

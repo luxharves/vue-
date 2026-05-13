@@ -1,16 +1,32 @@
-//实际上这个包含了两件事，一个是task的crud，另外一个是task的状态管理，且task是跨组件的核心业务数据
-
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import type { Block, Task, TaskStatus, TaskPriority } from '@/types'
 import { storageService } from '@/services/storageService'
+import { useWorkspaceStore } from '@/stores/workspaceStore'
 
 const STORAGE_KEY = 'tasks'
 
 export const useTaskStore = defineStore('task', () => {
   const tasks = ref<Task[]>(storageService.load<Task[]>(STORAGE_KEY) ?? [])
-//这里是从localStorage中加载之前保存的任务数据，如果没有数据则初始化为空数组
-  const tasksByStatus = computed(() => {//派生出去变成todo,doing,done三个数组，方便后续在不同组件中使用
+
+  // 迁移旧数据：没有 workspaceId 的任务归属到默认空间
+  const wsStore = useWorkspaceStore()
+  let migrated = false
+  for (const t of tasks.value) {
+    if (!t.workspaceId) {
+      t.workspaceId = wsStore.currentId || 'default'
+      migrated = true
+    }
+  }
+  if (migrated) {
+    storageService.save(STORAGE_KEY, tasks.value)
+  }
+
+  const currentTasks = computed(() =>
+    tasks.value.filter((t) => t.workspaceId === wsStore.currentId)
+  )
+
+  const tasksByStatus = computed(() => {
     const grouped: Record<TaskStatus, Task[]> = { todo: [], doing: [], done: [] }
     for (const task of tasks.value) {
       grouped[task.status].push(task)
@@ -18,8 +34,16 @@ export const useTaskStore = defineStore('task', () => {
     return grouped
   })
 
+  const currentTasksByStatus = computed(() => {
+    const grouped: Record<TaskStatus, Task[]> = { todo: [], doing: [], done: [] }
+    for (const task of currentTasks.value) {
+      grouped[task.status].push(task)
+    }
+    return grouped
+  })
+
   function addTask(title: string, options?: { priority?: TaskPriority; tags?: string[] }): Task {
-    const now = Date.now()//生成了时间戳
+    const now = Date.now()
     const task: Task = {
       id: crypto.randomUUID(),
       title,
@@ -27,10 +51,11 @@ export const useTaskStore = defineStore('task', () => {
       priority: options?.priority ?? 'medium',
       tags: options?.tags ?? [],
       blocks: [],
+      workspaceId: wsStore.currentId,
       createdAt: now,
       updatedAt: now,
     }
-    tasks.value.unshift(task)//最上方unshift
+    tasks.value.unshift(task)
     return task
   }
 
@@ -48,7 +73,7 @@ export const useTaskStore = defineStore('task', () => {
     const task = tasks.value.find((t) => t.id === id)
     if (task) {
       task.status = status
-      task.updatedAt = Date.now()//更新时间
+      task.updatedAt = Date.now()
     }
   }
 
@@ -82,9 +107,9 @@ export const useTaskStore = defineStore('task', () => {
     task.updatedAt = Date.now()
   }
 
-  watch(tasks, (val) => {//持久化watch监听tasks的变化，每当tasks发生变化时，就会调用storageService.save方法将最新的tasks数据保存到localStorage中，这样即使刷新页面，之前的任务数据也不会丢失。
+  watch(tasks, (val) => {
     storageService.save(STORAGE_KEY, val)
   }, { deep: true })
 
-  return { tasks, tasksByStatus, addTask, updateTask, deleteTask, changeStatus, addBlock, updateBlock, deleteBlock, reorderBlocks }
+  return { tasks, currentTasks, tasksByStatus, currentTasksByStatus, addTask, updateTask, deleteTask, changeStatus, addBlock, updateBlock, deleteBlock, reorderBlocks }
 })

@@ -1,7 +1,10 @@
 <template>
   <div class="kanban-view">
     <div class="view-header">
-      <h2 class="view-title">Kanban 看板</h2>
+      <div class="header-top">
+        <h2 class="view-title">看板</h2>
+        <ViewSwitcher />
+      </div>
       <div class="add-task-bar">
         <input
           ref="inputRef"
@@ -19,7 +22,7 @@
         v-for="status in statuses"
         :key="status"
         :status="status"
-        :tasks="taskStore.tasksByStatus[status]"
+        :tasks="taskStore.currentTasksByStatus[status]"
       />
     </div>
   </div>
@@ -30,6 +33,7 @@ import { ref } from 'vue'
 import type { TaskStatus } from '@/types'
 import { useTaskStore } from '@/stores/taskStore'
 import KanbanColumn from '@/components/kanban/KanbanColumn.vue'
+import ViewSwitcher from '@/components/common/ViewSwitcher.vue'
 
 const taskStore = useTaskStore()
 
@@ -61,11 +65,18 @@ function handleAdd(): void {
   margin-bottom: 20px;
 }
 
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
 .view-title {
   font-size: 20px;
   font-weight: 700;
   color: #1a1a2e;
-  margin: 0 0 12px 0;
+  margin: 0;
 }
 
 .add-task-bar {
