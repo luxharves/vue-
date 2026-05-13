@@ -12,7 +12,14 @@
       "mcp__plugin_playwright_playwright__browser_evaluate",
       "mcp__plugin_playwright_playwright__browser_click",
       "mcp__plugin_playwright_playwright__browser_run_code_unsafe",
-      "mcp__plugin_playwright_playwright__browser_drag"
+      "mcp__plugin_playwright_playwright__browser_drag",
+      "Bash(python3 -m json.tool /c/Users/Lenovo/.claude/plugins/installed_plugins.json)",
+      "Bash(npx tsc *)",
+      "Bash(npx typescript-language-server *)",
+      "Bash(claude plugins *)",
+      "mcp__plugin_playwright_playwright__browser_file_upload",
+      "mcp__plugin_playwright_playwright__browser_close",
+      "Bash(xargs wc -l)"
     ]
   }
 }

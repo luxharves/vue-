@@ -7,7 +7,6 @@
     @dragstart="onDragStart"
     @dragend="onDragEnd"
   >
-    <div class="card-accent"></div>
     <div class="card-body">
       <div class="card-top">
         <h3 class="card-title">{{ task.title }}</h3>
@@ -19,8 +18,7 @@
             <el-dropdown-menu>
               <el-dropdown-item
                 v-for="opt in availableStatuses"
-                :key="opt.value"
-                :command="opt.value"
+                :key="opt.value" :command="opt.value"
                 :class="`status-option-${opt.value}`"
               >
                 <span class="status-dot" :class="`dot-${opt.value}`"></span>
@@ -28,35 +26,28 @@
               </el-dropdown-item>
               <el-dropdown-item
                 v-for="p in availablePriorities"
-                :key="`p-${p.value}`"
-                :command="`priority:${p.value}`"
-                divided
+                :key="`p-${p.value}`" :command="`priority:${p.value}`" divided
               >
                 <span class="priority-dot-sm" :class="`dot-p-${p.value}`"></span>
                 {{ p.label }}
               </el-dropdown-item>
               <el-dropdown-item command="delete" divided class="delete-option">
-                <el-icon><Delete /></el-icon>
-                <span>删除任务</span>
+                <el-icon><Delete /></el-icon><span>删除任务</span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
       </div>
+
       <div class="card-meta">
-        <span class="priority-badge" :class="`priority-${task.priority}`">
-          {{ priorityLabel }}
-        </span>
+        <span class="priority-dot" :class="`p-${task.priority}`"></span>
+        <span class="priority-text">{{ priorityLabel }}</span>
         <el-tag
-          v-for="tag in task.tags"
-          :key="tag"
-          size="small"
-          round
-          class="card-tag"
-        >
-          {{ tag }}
-        </el-tag>
+          v-for="tag in task.tags" :key="tag"
+          size="small" round class="card-tag"
+        >{{ tag }}</el-tag>
       </div>
+
       <p class="card-date">{{ formattedDate }}</p>
     </div>
   </div>
@@ -71,14 +62,11 @@ import { useTaskStore } from '@/stores/taskStore'
 
 const DRAG_DATA_KEY = 'task-id'
 
-const props = defineProps<{
-  task: Task
-}>()
+const props = defineProps<{ task: Task }>()
 
 const taskStore = useTaskStore()
 const router = useRouter()
 const route = useRoute()
-
 const dragging = ref(false)
 
 function onDragStart(e: DragEvent): void {
@@ -87,67 +75,38 @@ function onDragStart(e: DragEvent): void {
   e.dataTransfer.effectAllowed = 'move'
   dragging.value = true
 }
+function onDragEnd(): void { dragging.value = false }
 
-function onDragEnd(): void {
-  dragging.value = false
-}
-
-const priorityMap: Record<TaskPriority, string> = {
-  high: '高',
-  medium: '中',
-  low: '低',
-}
-
-const statusMap: Record<TaskStatus, string> = {
-  todo: '待办',
-  doing: '进行中',
-  done: '已完成',
-}
-
+const priorityMap: Record<TaskPriority, string> = { high: '高', medium: '中', low: '低' }
+const statusMap: Record<TaskStatus, string> = { todo: '待办', doing: '进行中', done: '已完成' }
 const allStatuses: TaskStatus[] = ['todo', 'doing', 'done']
-
-const availableStatuses = computed(() =>
-  allStatuses
-    .filter((s) => s !== props.task.status)
-    .map((s) => ({ value: s, label: statusMap[s] }))
-)
-
 const allPriorities: TaskPriority[] = ['high', 'medium', 'low']
 
-const availablePriorities = computed(() =>
-  allPriorities
-    .filter((p) => p !== props.task.priority)
-    .map((p) => ({ value: p, label: priorityMap[p] }))
+const availableStatuses = computed(() =>
+  allStatuses.filter((s) => s !== props.task.status).map((s) => ({ value: s, label: statusMap[s] }))
 )
-
+const availablePriorities = computed(() =>
+  allPriorities.filter((p) => p !== props.task.priority).map((p) => ({ value: p, label: priorityMap[p] }))
+)
 const priorityLabel = computed(() => priorityMap[props.task.priority] ?? props.task.priority)
 
 function handleCommand(cmd: string): void {
-  if (cmd === 'delete') {
-    taskStore.deleteTask(props.task.id)
-  } else if (cmd.startsWith('priority:')) {
-    const newPriority = cmd.replace('priority:', '') as TaskPriority
-    taskStore.updateTask(props.task.id, { priority: newPriority })
-  } else {
-    taskStore.changeStatus(props.task.id, cmd as TaskStatus)
-  }
+  if (cmd === 'delete') { taskStore.deleteTask(props.task.id) }
+  else if (cmd.startsWith('priority:')) { taskStore.updateTask(props.task.id, { priority: cmd.replace('priority:', '') as TaskPriority }) }
+  else { taskStore.changeStatus(props.task.id, cmd as TaskStatus) }
 }
 
-function goDetail(): void {
-  router.push(`/workspace/${route.params.id}/task/${props.task.id}`)
-}//路由控制器，router.push跳转页面
+function goDetail(): void { router.push(`/workspace/${route.params.id}/task/${props.task.id}`) }
 
 const formattedDate = computed(() => {
   const d = new Date(props.task.createdAt)
-  const now = new Date()
-  const diff = now.getTime() - d.getTime()
-  const minutes = Math.floor(diff / 60000)
-  const hours = Math.floor(diff / 3600000)
+  const diff = Date.now() - d.getTime()
+  const m = Math.floor(diff / 60000)
+  const h = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
-
-  if (minutes < 1) return '刚刚'
-  if (minutes < 60) return `${minutes} 分钟前`
-  if (hours < 24) return `${hours} 小时前`
+  if (m < 1) return '刚刚'
+  if (m < 60) return `${m} 分钟前`
+  if (h < 24) return `${h} 小时前`
   if (days < 7) return `${days} 天前`
   return d.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })
 })
@@ -157,139 +116,143 @@ const formattedDate = computed(() => {
 .task-card {
   position: relative;
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.02),
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 2px 4px rgba(0, 0, 0, 0.03);
   cursor: pointer;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease;
   overflow: hidden;
 }
 
+.task-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 8px; bottom: 8px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  transition: background 0.2s ease;
+}
+
+.priority-high::before  { background: #e5484d; }
+.priority-medium::before { background: #f5b041; }
+.priority-low::before   { background: #30a46c; }
+
 .task-card:hover {
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0, 0, 0, 0.06);
-  transform: translateY(-1px);
+  border-color: rgba(0, 0, 0, 0.09);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.03),
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
 .task-card.is-dragging {
-  opacity: 0.4;
-  transform: rotate(2deg) scale(0.97);
+  opacity: 0.35;
+  transform: scale(0.97);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
 }
-
-.card-accent {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  border-radius: 10px 0 0 10px;
-}
-
-.priority-high .card-accent   { background: #e74c3c; }
-.priority-medium .card-accent { background: #f39c12; }
-.priority-low .card-accent    { background: #27ae60; }
 
 .card-body {
-  padding: 12px 16px 12px 16px;
+  padding: 14px 16px 16px 16px;
 }
 
 .card-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
 .card-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1a2e;
+  font-size: 13.5px;
+  font-weight: 550;
+  color: #1e1e20;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.45;
   word-break: break-word;
   flex: 1;
   min-width: 0;
+  letter-spacing: -0.01em;
 }
 
 .status-trigger {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  color: #bbb;
+  width: 26px; height: 26px;
+  border-radius: 7px;
+  color: #c5c8cd;
   flex-shrink: 0;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.12s, color 0.12s;
+  opacity: 0;
 }
 
-.status-trigger:hover {
-  background: #edf0f4;
-  color: #666;
-}
+.task-card:hover .status-trigger { opacity: 1; }
+.status-trigger:hover { background: #f1f3f6; color: #555; }
 
 .card-meta {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   flex-wrap: wrap;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.priority-badge {
-  font-size: 10px;
-  font-weight: 600;
-  padding: 1px 8px;
-  border-radius: 10px;
-  letter-spacing: 0.5px;
+/* Priority — subtle dot + text */
+.priority-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.priority-badge.priority-high   { background: #fde8e8; color: #c0392b; }
-.priority-badge.priority-medium { background: #fef3cd; color: #b45309; }
-.priority-badge.priority-low    { background: #d4edda; color: #1e7e34; }
+.priority-dot.p-high   { background: #e5484d; }
+.priority-dot.p-medium { background: #f5b041; }
+.priority-dot.p-low    { background: #30a46c; }
 
+.priority-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: #8e8e93;
+  margin-right: 4px;
+}
+
+/* Tags */
 .card-tag {
-  font-size: 11px !important;
+  font-size: 10px !important;
+  border-radius: 5px !important;
+  padding: 0 8px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+  border: none !important;
+  background: #f2f3f5 !important;
+  color: #6b6e76 !important;
+  font-weight: 500 !important;
 }
 
 .card-date {
   font-size: 11px;
-  color: #aaa;
+  color: #b0b3ba;
   margin: 0;
 }
 
-/* Status dropdown */
-.status-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 6px;
-  vertical-align: middle;
+/* Dropdown */
+.status-dot, .priority-dot-sm {
+  display: inline-block; width: 8px; height: 8px;
+  border-radius: 50%; margin-right: 6px; vertical-align: middle;
 }
+.dot-todo  { background: #5b8def; }
+.dot-doing { background: #f5b041; }
+.dot-done  { background: #30a46c; }
+.dot-p-high   { background: #e5484d; }
+.dot-p-medium { background: #f5b041; }
+.dot-p-low    { background: #30a46c; }
 
-.dot-todo  { background: #4a90d9; }
-.dot-doing { background: #f39c12; }
-.dot-done  { background: #27ae60; }
-
-.priority-dot-sm {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 6px;
-  vertical-align: middle;
-}
-
-.dot-p-high   { background: #e74c3c; }
-.dot-p-medium { background: #f39c12; }
-.dot-p-low    { background: #27ae60; }
-
-/* Delete option */
-.delete-option {
-  color: #e74c3c !important;
-}
-
-.delete-option:hover {
-  background: #fde8e8 !important;
-}
+.delete-option { color: #e5484d !important; }
+.delete-option:hover { background: #fef2f2 !important; }
 </style>

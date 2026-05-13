@@ -2,7 +2,7 @@
 
 ## 当前阶段
 
-**S4 — Block + Detail 视图**（待开始）
+**S6 — AI Service**（进行中）
 
 ## 阶段进度
 
@@ -11,9 +11,9 @@
 | S1: 数据模型 + Store | ✅ 已完成 | 2026-05-10 |
 | S2: Kanban 视图 | ✅ 已完成 | 2026-05-11 |
 | S3: Table 视图 | ✅ 已完成 | 2026-05-12 |
-| S4: Block + Detail | ⚪ 待开始 | — |
-| S5: Workspace + UI | ⚪ 待开始 | — |
-| S6: AI Service | ⚪ 待开始 | — |
+| S4: Block + Detail | ✅ 已完成 | 2026-05-12 |
+| S5: Workspace + UI | ✅ 已完成 | 2026-05-13 |
+| S6: AI Service | ✅ 已完成 | 2026-05-13 |
 
 ## S1 任务清单
 
@@ -59,6 +59,41 @@
   - **验收**：点击表头按创建时间 / 优先级升序降序排序，表头有小箭头指示排序方向 ✅ (2026-05-12)
 - [x] 行操作（状态切换 + 删除 + 跳转 Detail）
   - **验收**：行内可改状态、删除任务（有确认弹窗）、点击标题跳转 Detail 页 ✅ (2026-05-12)
+
+## S4 任务清单
+
+> **设计策略**: Block 编辑器采用类 Notion 逐块编辑体验——点击 Block 切换为编辑态，Enter 末尾新建 Block，删除自动聚焦下一个。先从 text 类型打地基，再扩展 todo/code/image/ai。
+
+- [x] 创建 DetailView 页面壳
+  - **验收**：从看板/表格点任务进入 Detail，正确显示标题/状态/优先级/标签，可编辑标题和属性，数据来自 taskStore ✅ (2026-05-12)
+- [x] Text Block 系统
+  - **验收**：支持新增 text Block、点击编辑内容、Enter 自动在下方创建新 Block、Backspace 空行删除 Block，编辑态切换流畅 ✅ (2026-05-12)
+- [x] Todo + Code + Image + AI Block
+  - **验收**：todo Block 可勾选/取消勾选；code Block 有 monospace 样式；image Block 显示图片 URL；ai Block 显示 AI 标记占位 ✅ (2026-05-12)
+- [x] Block 类型切换 + 拖拽排序
+  - **验收**：任意 Block 可切换类型；拖拽 Block 重新排序；刷新不丢 ✅ (2026-05-12)
+
+## S5 任务清单
+
+> **设计策略**: Task 加 workspaceId 实现空间隔离，保持 taskStore 扁平结构不重构。侧边栏用右键菜单管理空间（重命名/删除），底部加新增按钮。视图切换器放在顶部导航栏。
+
+- [x] workspaceStore + Task 改造
+  - **验收**：创建 workspaceStore 含 CRUD + 持久化；Task 上加 workspaceId；新建任务自动绑定当前空间；切换空间后看板/表格只显示当前空间任务 ✅ (2026-05-13)
+- [x] 动态 WorkspaceSidebar
+  - **验收**：左侧栏列出所有空间，高亮当前空间，点击切换；右键菜单可重命名/删除；底部有新建按钮
+- [x] 视图切换器
+  - **验收**：在看板和表格页顶部有切换按钮，点击切换视图，不丢空间上下文
+
+## S6 任务清单
+
+> **设计策略**: OpenAI 兼容 API 直调，API Key 存 localStorage。AI 功能入口放在 DetailView。每个 AI 操作独立请求，返回结果直接写入 Task/Block。
+
+- [x] AI Service 层 + 配置 UI
+  - **验收**：创建 aiService 抽象模型调用（OpenAI 兼容）；侧边栏加设置入口可配 API Key / 模型 / Base URL；配置持久化 ✅ (2026-05-13)
+- [x] AI 总结 + 标签生成
+  - **验收**：Detail 页"AI 总结"按钮→调 AI 生成摘要写入 ai Block；"生成标签"按钮→AI 返回标签写回 Task.tags ✅ (2026-05-13)
+- [x] 内容优化 + AI Block 集成
+  - **验收**：text/todo Block 加"优化"按钮→AI 润色文字；ai Block 输入 prompt 调 AI 生成内容 ✅ (2026-05-13)
 
 ## 阻塞
 

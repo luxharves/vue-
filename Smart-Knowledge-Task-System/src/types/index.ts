@@ -20,6 +20,7 @@ export interface Task {
   priority: TaskPriority
   tags: string[]
   blocks: Block[]
+  workspaceId: string
   createdAt: number
   updatedAt: number
 }

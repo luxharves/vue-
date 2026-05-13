@@ -1,7 +1,10 @@
 <template>
   <div class="kanban-view">
     <div class="view-header">
-      <h2 class="view-title">Kanban 看板</h2>
+      <div class="header-top">
+        <h2 class="view-title">看板</h2>
+        <ViewSwitcher />
+      </div>
       <div class="add-task-bar">
         <input
           ref="inputRef"
@@ -11,7 +14,9 @@
           placeholder="输入任务标题，回车新建..."
           @keydown.enter="handleAdd"
         />
-        <button class="add-btn" @click="handleAdd">+</button>
+        <button class="add-btn" @click="handleAdd">
+          <span>+</span>
+        </button>
       </div>
     </div>
     <div class="board">
@@ -19,7 +24,7 @@
         v-for="status in statuses"
         :key="status"
         :status="status"
-        :tasks="taskStore.tasksByStatus[status]"
+        :tasks="taskStore.currentTasksByStatus[status]"
       />
     </div>
   </div>
@@ -30,11 +35,10 @@ import { ref } from 'vue'
 import type { TaskStatus } from '@/types'
 import { useTaskStore } from '@/stores/taskStore'
 import KanbanColumn from '@/components/kanban/KanbanColumn.vue'
+import ViewSwitcher from '@/components/common/ViewSwitcher.vue'
 
 const taskStore = useTaskStore()
-
 const statuses: TaskStatus[] = ['todo', 'doing', 'done']
-
 const newTitle = ref('')
 const inputRef = ref<HTMLInputElement | null>(null)
 
@@ -49,72 +53,85 @@ function handleAdd(): void {
 
 <style scoped>
 .kanban-view {
-  padding: 24px 28px;
+  padding: 28px 28px 24px;
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: #fcfcfd;
 }
 
 .view-header {
   flex-shrink: 0;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
 
 .view-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1a2e;
-  margin: 0 0 12px 0;
+  font-size: 22px;
+  font-weight: 650;
+  color: #1e1e20;
+  margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .add-task-bar {
   display: flex;
-  gap: 8px;
-  max-width: 400px;
+  gap: 6px;
+  max-width: 460px;
 }
 
 .task-input {
   flex: 1;
-  height: 36px;
-  padding: 0 12px;
-  border: 1px solid #d5d8e0;
-  border-radius: 8px;
-  font-size: 13px;
-  color: #333;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid #e2e4e9;
+  border-radius: 10px;
+  font-size: 13.5px;
+  color: #1e1e20;
   outline: none;
-  transition: border-color 0.15s;
   background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  letter-spacing: -0.01em;
 }
 
-.task-input::placeholder {
-  color: #bbb;
-}
+.task-input::placeholder { color: #c5c8cd; }
 
 .task-input:focus {
-  border-color: #409eff;
+  border-color: #5b8def;
+  box-shadow: 0 0 0 3px rgba(91, 141, 239, 0.12);
 }
 
 .add-btn {
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 8px;
-  background: #409eff;
-  color: #fff;
+  width: 38px; height: 38px;
+  border: 1px solid #e2e4e9;
+  border-radius: 10px;
+  background: #fff;
+  color: #8e8e93;
   font-size: 18px;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.15s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .add-btn:hover {
-  background: #337ecc;
+  border-color: #5b8def;
+  color: #5b8def;
+  background: #f5f8ff;
 }
 
 .board {
   display: flex;
-  gap: 16px;
+  gap: 18px;
   flex: 1;
   overflow: auto;
   align-items: flex-start;
